@@ -388,6 +388,17 @@ class Slime(pl.LightningModule):
                         self.test_results_dir, f"{batch_idx * image.shape[0] + i}.png"
                     )
                 )
+                # save mask as numpy aray
+                np_mask = final_mask.cpu().numpy()
+
+                import numpy as np
+
+                Image.fromarray(np_mask.astype(np.uint8)).save(
+                    os.path.join(
+                        self.test_results_dir,
+                        f"{batch_idx * image.shape[0] + i}_mask.png",
+                    )
+                )
 
         if mask_provided:
             for idx, part_name in enumerate(self.config.part_names):
@@ -405,7 +416,8 @@ class Slime(pl.LightningModule):
         return torch.tensor(0.0)
 
     def on_test_end(self) -> None:
-        print("max val mean iou: ", self.max_val_iou)
+        # return last mask
+        return self.test_t_embedding
 
     def configure_optimizers(self):
         parameters = [{"params": self.embeddings_to_optimize, "lr": self.config.lr}]

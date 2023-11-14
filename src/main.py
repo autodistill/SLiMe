@@ -9,6 +9,7 @@ from src.arguments import init_args
 
 def main():
     config = init_args()
+    print(config)
     if config.train:
         num_parts = len(config.part_names)
     else:
